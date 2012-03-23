@@ -1,6 +1,6 @@
 #!/bin/bash
 #File Merge and Appender 0.1
-#smof 20/02/12
+#Simon Moffatt 20/02/12
 
 function merge() {
 	

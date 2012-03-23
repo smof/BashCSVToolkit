@@ -1,6 +1,6 @@
 #!/bin/bash
 #AWK port of my Java StringCAT util.  Concatenation tool for merging multi-line records to single-line
-#smof 27/02/12
+#Simon Moffatt 27/02/12
 #Takes 2 args - first is orig file, 2nd is output file.  Assumes orig data contains only 2 fields.
 
 echo 'Starting...'

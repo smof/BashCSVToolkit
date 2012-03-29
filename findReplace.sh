@@ -11,8 +11,11 @@ if [ $# -lt 3 ]
  then
 	echo "Oops!"
 	echo "Needs atleast 3 args: ./findReplace.sh <old_string> <new_string> <filename_pattern>"
-	echo "Eg. ./findReplace.sh smith jones letter.txt for single file"
-	echo "Eg. ./findReplace.sh smith jones *.txt for multiple files matching pattern"
+	echo "Eg. ./findReplace.sh smith jones letter.txt >> for single file"
+	echo "Eg. ./findReplace.sh smith jones *.txt >> for multiple files matching pattern"
+	echo ""
+	echo "Special keyword: nothing"
+	echo "Eg. ./findReplace.sh \\\" nothing file.txt >> replaces quotes with nothing - \"simon\" >> simon"
 	exit 0
 fi
 
@@ -32,8 +35,21 @@ for ((i = 2; i < $ARGCount; i++))
 do
 	if [ -f "${ARGV[$i]}" ]
 	then    
-		sed -i_bkup "s/$orig_string/$new_string/g" "${ARGV[$i]}"
-		echo "Done: ${ARGV[$i]}"
+
+		#perform a null check on replacement argument if replaceing something within "nothing"		
+		if [ "$new_string" = "nothing" ]
+		then	
+
+			sed -i_bkup "s/${orig_string}//g" "${ARGV[$i]}"
+			echo "Done: ${ARGV[$i]}"		
+
+		else
+	
+			sed -i_bkup "s/${orig_string}/${new_string}/g" "${ARGV[$i]}"
+			echo "Done: ${ARGV[$i]}"		
+
+		fi
+		
 	else
 		echo "File not found: ${ARGV[$i]}"
 	fi

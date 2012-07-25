@@ -37,12 +37,12 @@ function mask_vowels {
 }
 
 
-#One way masker replacing constanants -.
-function mask_const {
+#One way masker replacing consonants -.
+function mask_cons {
 
-	const=abcdfghjklmnpqrstvwxyz		#Eg. SimonMoffatt = Si-o-Mo--a--
+	cons=abcdfghjklmnpqrstvwxyz		#Eg. SimonMoffatt = Si-o-Mo--a--
 
-	echo $1 | tr "$const" -
+	echo $1 | tr "$cons" -
 
 }
 
@@ -113,7 +113,7 @@ echo "$COL1,$COL2,$COL3,$COL4,$COL5,$COL6" > $OUTPUT
 #Read the CSV file
 while read COL1 COL2 COL3 COL4 COL5 COL6
 	do
-		echo "$(vowel_masker $COL1),$(const_masker $COL2),$COL3,$COL4,$COL5,$COL6" >> $OUTPUT
+		echo "$(mask_vowels $COL1),$(mask_cons $COL2),$COL3,$COL4,$COL5,$COL6" >> $OUTPUT
 
 	done < $INPUT
 

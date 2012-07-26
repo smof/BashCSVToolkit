@@ -4,17 +4,29 @@
 #Part of my BashCSVToolkit - https://github.com/smof/BashCSVToolkit
 #Simon Moffatt 25/07/12
 
+#Current List of Masks
+#mask_vowels - hides any vowels in a string with a dash
+#mask_cons - hides any consonants in a string with a dash
+#mask_random - hides any random alpha's in a string with a dash
+#rot13 - rotates alphabet 13 places
+#scrambler - subtitution based on a phrase
+#mask_middle - hides all bar middle 3 chars of a string with a dash
+#mask_credit_card - hides first 12 chars of the string with a dash
+#mask_letters - hides all letters in an alphanum with a dash
+#mask_numbers - hides all numbers in an alphanum with a dash
+#subs_cipher - key based substituion cipher
+
+
+
 #Data files
 INPUT=data.dat
 OUTPUT=anon.dat
 
 #Column definitions.  Just expand based on data being read
 COL1="Email"
-COL2="sammaccountname"
+COL2="LANID"
 COL3="EmployeeID"
-COL4="Title"
-COL5="City"
-COL6="Department"
+COL4="Phone"
 
 #Set input/output field separator
 OLDIFS=$IFS
@@ -24,7 +36,7 @@ IFS=,
 [ ! -f $INPUT ] && { echo "$INPUT file not found"; exit 99; }
 
 
-# M A S K I N G   F U N C T I O NS ###########################################################################
+# M A S K I N G   F U N C T I O N S ###################################################################################################
 #Basically just looked at tr --help and added abit of imagination...
 
 #One way masker replacing vowel chars with -.
@@ -49,7 +61,7 @@ function mask_cons {
 #One way masker replacing random chars with -.
 function mask_random {
 
-	random=siktmqj				#Eg. SimonMoffatt = S--onMoffa--
+	random=aeiouslmnthgd				#Eg. SimonMoffatt = S--onMoffa--
 
 	echo $1 | tr "$random" -
 
@@ -76,15 +88,15 @@ function rot13 {
 
 
 #Slightly tougher to crack subsitution cipher with chosen key of random alphabet
-function subt_cipher {
+function subs_cipher {
 	
 	key=ETAOINSHRDLUBCFGJMQPVWZYXK #must use all letters in alphabet in any order.  chars not in alphabet left unchanged
 
 	echo $1 | tr "a-z" "A-Z" | tr "A-Z" "$key"
 }
 
-#Reverses subt_cipher
-function reverse_subt_cipher {
+#Reverses subs_cipher
+function reverse_subs_cipher {
 	
 	key=ETAOINSHRDLUBCFGJMQPVWZYXK #must use all letters in alphabet in any order.  chars not in alphabet left unchanged
 
@@ -100,20 +112,41 @@ function scrambler {
 
 }
 
+#Masks all bar middle 3 chars of string
+function mask_middle {
 
-# M A S K I N G   F U N C T I O NS ###########################################################################
+	string=$1
+
+	#middle of 9char fixed length Eg. ---abc---
+	echo "---${string:4:6}---" 
+
+}
+
+
+#Masks first 12 chars of a credit card or similar fixed length string
+function mask_credit_card {
+
+	string=$1
+
+	#mask first 12 of 16 digit credit card Eg. ------------1234
+	echo "------------${string:13}"
+
+}
+
+
+# M A S K I N G   F U N C T I O N S ###################################################################################################
 
 
 
 
 
 #Creates header as anon output file might look a little confusing...
-echo "$COL1,$COL2,$COL3,$COL4,$COL5,$COL6" > $OUTPUT
+echo "$COL1,$COL2,$COL3" > $OUTPUT
 
 #Read the CSV file
-while read COL1 COL2 COL3 COL4 COL5 COL6
+while read COL1 COL2 COL3 COL4
 	do
-		echo "$(mask_vowels $COL1),$(mask_cons $COL2),$COL3,$COL4,$COL5,$COL6" >> $OUTPUT
+		echo "$(rot13 $COL1),$(mask_credit_card $COL2),$(mask_numbers $COL3), $(rot13 $COL4)" >> $OUTPUT
 
 	done < $INPUT
 
